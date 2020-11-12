@@ -12,7 +12,7 @@ function Player(name, symbol) {
     return { getName, getSymbol, getWins, increaseWins }; 
 };  
 
-Board = (el) => {
+Board = el => {
     let board = Array(9).fill(''); 
 
     el.innerHTML = `
@@ -43,6 +43,40 @@ Board = (el) => {
         squares[i].addEventListener('click', handleClick(i)); 
     } 
 
+    function didPlayerWin(symbol) {
+        let positions = [
+            // rows
+            [0, 1, 2], 
+            [3, 4, 5], 
+            [6, 7, 8], 
+
+            // cols
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+
+
+            // diagonals
+            [0, 4, 8], 
+            [2, 4, 6]
+        ];  
+       
+
+        return positions.some(([x, y, z]) => {
+            return (
+                symbol !== '' &&
+                board[x] === symbol && 
+                board[x] === board[y] && 
+                board[y] === board[z]
+            ); 
+        }); 
+
+    } 
+
+    function clearBoard() {
+        board = Array(9).fill(''); 
+    } 
+
     function validMove(position) {
         return board[position] === ''; 
     } 
@@ -63,7 +97,7 @@ Board = (el) => {
         return console.log(board); 
     };  
 
-    return { validMove, placeMove, renderBoard, showBoard } 
+    return { clearBoard, didPlayerWin, validMove, placeMove, renderBoard, showBoard } 
 }; 
 
 Game = ((el) => {
@@ -85,7 +119,15 @@ Game = ((el) => {
         const position = e.detail.position; 
         if (board.validMove(position)) {
             board.placeMove(currentPlayer.getSymbol(), position); 
-            swapTurns(); 
+            
+            if (board.didPlayerWin(currentPlayer.getSymbol())) {
+                alert(`${currentPlayer.getSymbol()} wins!`); 
+                currentPlayer.increaseWins(); 
+                board.clearBoard(); 
+                swapTurns(); 
+            } else {
+                swapTurns(); 
+            }
         } 
     }); 
 

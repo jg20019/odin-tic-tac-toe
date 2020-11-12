@@ -1,6 +1,6 @@
 
 function Player(name, symbol) {
-    const wins = 0;  
+    let wins = 0;  
 
     const getName = () => name ; 
     const getSymbol = () => symbol; 
@@ -43,6 +43,13 @@ Board = el => {
         squares[i].addEventListener('click', handleClick(i)); 
     } 
 
+    function didDraw(symbol) {
+        let availableMoves = board.reduce((count, pos) => {
+            return pos === '' ? count + 1 : count;  
+        }, 0); 
+        return availableMoves === 0; 
+    } 
+
     function didPlayerWin(symbol) {
         let positions = [
             // rows
@@ -75,6 +82,7 @@ Board = el => {
 
     function clearBoard() {
         board = Array(9).fill(''); 
+        renderBoard(); 
     } 
 
     function validMove(position) {
@@ -97,7 +105,7 @@ Board = el => {
         return console.log(board); 
     };  
 
-    return { clearBoard, didPlayerWin, validMove, placeMove, renderBoard, showBoard } 
+    return { clearBoard, didDraw, didPlayerWin, validMove, placeMove, renderBoard, showBoard } 
 }; 
 
 Game = ((el) => {
@@ -123,6 +131,10 @@ Game = ((el) => {
             if (board.didPlayerWin(currentPlayer.getSymbol())) {
                 alert(`${currentPlayer.getSymbol()} wins!`); 
                 currentPlayer.increaseWins(); 
+                board.clearBoard(); 
+                swapTurns(); 
+            } else if (board.didDraw(currentPlayer.getSymbol())) {
+                alert("It's a draw!");
                 board.clearBoard(); 
                 swapTurns(); 
             } else {

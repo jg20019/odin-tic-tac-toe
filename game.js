@@ -42,7 +42,11 @@ Board = (el) => {
     for(let i = 0; i < squares.length; i++) {
         squares[i].addEventListener('click', handleClick(i)); 
     } 
-   
+
+    function validMove(position) {
+        return board[position] === ''; 
+    } 
+
     function placeMove(symbol, position) {
         board[position] = symbol; 
         renderBoard(); 
@@ -59,7 +63,7 @@ Board = (el) => {
         return console.log(board); 
     };  
 
-    return { placeMove, renderBoard, showBoard } 
+    return { validMove, placeMove, renderBoard, showBoard } 
 }; 
 
 Game = ((el) => {
@@ -78,17 +82,18 @@ Game = ((el) => {
     const board = Board(el.querySelector('.board-root')); 
 
     el.addEventListener('Move', function (e) {
-        board.placeMove(currentPlayer.getSymbol(), e.detail.position); 
-        swapTurns(); 
+        const position = e.detail.position; 
+        if (board.validMove(position)) {
+            board.placeMove(currentPlayer.getSymbol(), position); 
+            swapTurns(); 
+        } 
     }); 
 
     function swapTurns() {
         if (player1.getSymbol() === currentPlayer.getSymbol()) {
-            console.log('Changing players.'); 
             currentPlayer = player2; 
         } else {
             currentPlayer = player1; 
-            console.log('Not changing players.'); 
         } 
     }
     

@@ -12,6 +12,28 @@ function Player(name, symbol) {
     return { getName, getSymbol, getWins, increaseWins }; 
 };  
 
+function PlayerView(el) {
+    el.innerHTML = `
+        <span class="name"></span>
+        Wins: <span class="wins"></span>  
+    `; 
+
+    let nameEl = el.querySelector('.name'); 
+    let winsEl = el.querySelector('.wins'); 
+
+    function render(player, isTurn) {
+        if (isTurn) {
+            el.style.color = 'red'; 
+        } else {
+            el.style.color = 'black'; 
+        }   
+        nameEl.innerText = `${player.getName()}(${player.getSymbol()})`;  
+        winsEl.innerText = player.getWins(); 
+    } 
+    
+    return { render }; 
+}
+
 Board = el => {
     let board = Array(9).fill(''); 
 
@@ -105,20 +127,32 @@ Board = el => {
         return console.log(board); 
     };  
 
-    return { clearBoard, didDraw, didPlayerWin, validMove, placeMove, renderBoard, showBoard } 
+    return {
+        clearBoard,
+        didDraw, 
+        didPlayerWin,
+        validMove,
+        placeMove,
+        renderBoard,
+        showBoard 
+    }; 
 }; 
 
 Game = ((el) => {
     el.innerHTML = `
         <div class="game">
-            <div class="player1"></div> 
-            <div class="player2"></div> 
+            <div class="player-1"></div> 
+            <div class="player-2"></div> 
             <div class="board-root"></div> 
         </div> 
     `; 
 
-    const player1 = Player('John', 'X'); 
-    const player2 = Player('Sarah', 'O'); 
+    const player1 = Player('Player 1', 'X'); 
+    const player2 = Player('Player 2', 'O'); 
+
+    const player1View = PlayerView(el.querySelector('.player-1')); 
+    const player2View = PlayerView(el.querySelector('.player-2')); 
+
     let currentPlayer = player1; 
 
     const board = Board(el.querySelector('.board-root')); 
@@ -140,11 +174,25 @@ Game = ((el) => {
             } else {
                 swapTurns(); 
             }
+            render(); 
         } 
     }); 
 
+
+    render(); 
+
+    function render() {
+        console.log(`Player 1 Turn: ${isPlayerTurn(player1)}`);  
+        console.log(`Player 2 Turn: ${isPlayerTurn(player2)}`); 
+        player1View.render(player1, isPlayerTurn(player1)); 
+        player2View.render(player2, isPlayerTurn(player2)); 
+    } 
+
+    function isPlayerTurn(player) {
+        return (player.getSymbol() === currentPlayer.getSymbol()); 
+    } 
     function swapTurns() {
-        if (player1.getSymbol() === currentPlayer.getSymbol()) {
+        if (isPlayerTurn(player1)) {
             currentPlayer = player2; 
         } else {
             currentPlayer = player1; 

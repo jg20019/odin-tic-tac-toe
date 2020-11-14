@@ -36,6 +36,7 @@ function PlayerView(el) {
 
     let nameEl = el.querySelector('.name'); 
     let winsEl = el.querySelector('.wins'); 
+    let nameInput = el.querySelector('.name-input input'); 
 
     function update(next) {
         Object.assign(state, next);
@@ -46,8 +47,13 @@ function PlayerView(el) {
         } else {
             el.style.color = 'black'; 
         }   
-        nameEl.innerText = `${player.getName()}(${player.getSymbol()})`;  
-        winsEl.innerText = player.getWins(); 
+
+        if (editable) {
+            nameInput.style.display = 'block'; 
+        } else {
+            nameEl.innerText = `${player.getName()}(${player.getSymbol()})`;  
+            winsEl.innerText = player.getWins(); 
+        } 
     } 
     
     return { update }; 

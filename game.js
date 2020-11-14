@@ -2,7 +2,13 @@
 function Player(name, symbol) {
     let wins = 0;  
 
+    let defaultName = name; 
     const getName = () => name ; 
+    const setName = newName => {
+        newName = newName.trim()
+        name = newName === '' ? defaultName : newName; 
+    }; 
+
     const getSymbol = () => symbol; 
     const getWins = () => wins; 
     const increaseWins = () => {
@@ -11,6 +17,7 @@ function Player(name, symbol) {
 
     return {
         getName,
+        setName, 
         getSymbol,
         getWins,
         increaseWins
@@ -43,6 +50,12 @@ function PlayerView(el) {
         nameInput.focus(); 
     }); 
 
+    nameInput.addEventListener('blur', e => {
+        state.player.setName(e.target.value); 
+        update({editable: false});  
+    }); 
+
+
     function update(next) {
         Object.assign(state, next);
         let {player, isTurn, editable} = state; 
@@ -57,6 +70,7 @@ function PlayerView(el) {
             nameInput.style.display = 'block'; 
             nameInput.value = player.getName(); 
         } else {
+            nameInput.style.display = 'none'; 
             nameEl.innerText = `${player.getName()}(${player.getSymbol()})`;  
             winsEl.innerText = player.getWins(); 
         } 

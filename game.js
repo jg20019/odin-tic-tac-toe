@@ -38,6 +38,7 @@ function PlayerView(el) {
         </div> 
         <div class="name-input"> 
             <input type="text"> 
+            <span class="bottom-line"></span> 
         </div> 
     `; 
 

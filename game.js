@@ -9,19 +9,38 @@ function Player(name, symbol) {
         wins++; 
     }; 
 
-    return { getName, getSymbol, getWins, increaseWins }; 
+    return {
+        getName,
+        getSymbol,
+        getWins,
+        increaseWins
+    }; 
 };  
 
 function PlayerView(el) {
+    let state = {
+        editable: false,
+        player: null, 
+        isTurn: false, 
+    }; 
+
     el.innerHTML = `
-        <span class="name"></span>
-        Wins: <span class="wins"></span>  
+        <div class="player">
+            <span class="name"></span>
+            Wins: <span class="wins"></span>  
+        </div> 
+        <div class="name-input"> 
+            <input type="text"> 
+        </div> 
     `; 
 
     let nameEl = el.querySelector('.name'); 
     let winsEl = el.querySelector('.wins'); 
 
-    function render(player, isTurn) {
+    function update(next) {
+        Object.assign(state, next);
+        let {player, isTurn, editable} = state; 
+
         if (isTurn) {
             el.style.color = 'red'; 
         } else {
@@ -31,7 +50,7 @@ function PlayerView(el) {
         winsEl.innerText = player.getWins(); 
     } 
     
-    return { render }; 
+    return { update }; 
 }
 
 Board = el => {
@@ -157,6 +176,11 @@ Game = ((el) => {
 
     const board = Board(el.querySelector('.board-root')); 
 
+    let state = {
+        player1, player2, player1View, player2View, 
+        currentPlayer, board
+    }; 
+
     el.addEventListener('Move', function (e) {
         const position = e.detail.position; 
         if (board.validMove(position)) {
@@ -166,26 +190,36 @@ Game = ((el) => {
                 alert(`${currentPlayer.getSymbol()} wins!`); 
                 currentPlayer.increaseWins(); 
                 board.clearBoard(); 
-                swapTurns(); 
             } else if (board.didDraw(currentPlayer.getSymbol())) {
                 alert("It's a draw!");
                 board.clearBoard(); 
-                swapTurns(); 
-            } else {
-                swapTurns(); 
-            }
-            render(); 
+            } 
+
+            swapTurns(); 
+            update(); 
         } 
     }); 
 
 
-    render(); 
+    update(); 
 
-    function render() {
+    function update(next) {
+        Object.assign(state, next); 
+
+        let {player1, player1View, player2, player2View} = state; 
+
         console.log(`Player 1 Turn: ${isPlayerTurn(player1)}`);  
         console.log(`Player 2 Turn: ${isPlayerTurn(player2)}`); 
-        player1View.render(player1, isPlayerTurn(player1)); 
-        player2View.render(player2, isPlayerTurn(player2)); 
+
+        player1View.update({
+            player: player1, 
+            isTurn: isPlayerTurn(player1)
+        }); 
+
+        player2View.update({
+            player: player2,
+            isTurn: isPlayerTurn(player2)
+        }); 
     } 
 
     function isPlayerTurn(player) {

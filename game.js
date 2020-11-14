@@ -45,16 +45,35 @@ function PlayerView(el) {
     let winsEl = el.querySelector('.wins'); 
     let nameInput = el.querySelector('.name-input input'); 
 
+
     el.querySelector('.name-input').addEventListener('dblclick', e => {
         update({editable: true})
         nameInput.focus(); 
     }); 
 
     nameInput.addEventListener('blur', e => {
-        state.player.setName(e.target.value); 
-        update({editable: false});  
+        changeName(e.target.value); 
+        hideInput(); 
     }); 
 
+    nameInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+            changeName(e.target.value); 
+            hideInput(); 
+        } 
+    }); 
+
+    function changeName(newName) {
+        state.player.setName(newName); 
+    } 
+
+    function showInput() {
+        update({editable: true}); 
+    } 
+
+    function hideInput() {
+        update({editable: false}); 
+    } 
 
     function update(next) {
         Object.assign(state, next);

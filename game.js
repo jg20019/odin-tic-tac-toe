@@ -38,6 +38,11 @@ function PlayerView(el) {
     let winsEl = el.querySelector('.wins'); 
     let nameInput = el.querySelector('.name-input input'); 
 
+    el.querySelector('.name-input').addEventListener('dblclick', e => {
+        update({editable: true})
+        nameInput.focus(); 
+    }); 
+
     function update(next) {
         Object.assign(state, next);
         let {player, isTurn, editable} = state; 

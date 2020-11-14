@@ -55,6 +55,7 @@ function PlayerView(el) {
 
         if (editable) {
             nameInput.style.display = 'block'; 
+            nameInput.value = player.getName(); 
         } else {
             nameEl.innerText = `${player.getName()}(${player.getSymbol()})`;  
             winsEl.innerText = player.getWins(); 
